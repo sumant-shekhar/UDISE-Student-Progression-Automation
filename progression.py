@@ -1,3 +1,5 @@
+
+
 # ==================== Importing necessary libraries ====================
 import sys
 import time
@@ -87,10 +89,10 @@ wait = WebDriverWait(driver, 20)
 
 # ==================== Login ====================
 username_field = wait.until(EC.visibility_of_element_located((By.ID, "username-field")))
-username_field.send_keys("10140803009")
+username_field.send_keys("username")
 
 password_field = driver.find_element(By.ID, "password-field")
-password_field.send_keys("Atul@1234")
+password_field.send_keys("Password")
 
 # ==================== CAPTCHA (15 sec) ====================
 time.sleep(15)
