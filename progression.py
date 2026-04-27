@@ -20,6 +20,10 @@ from selenium.common.exceptions import ElementNotInteractableException, StaleEle
 
 from webdriver_manager.chrome import ChromeDriverManager
 
+# ==================== Credentials — change these before running ====================
+USERNAME = "10140615303"
+PASSWORD = "58#wwhLG"
+
 # ==================== JSON Logger Setup ====================
 
 # File name: 2026-04-25_14-30-55.json  (date_time format, safe for filenames)
@@ -30,7 +34,7 @@ log_data = {
     "session": {
         "started_at": datetime.now().isoformat(),
         "log_file": LOG_FILENAME,
-        "username": "10140615303"
+        "username": USERNAME
     },
     "summary": {
         "total_students": 0,
@@ -89,10 +93,10 @@ wait = WebDriverWait(driver, 20)
 
 # ==================== Login ====================
 username_field = wait.until(EC.visibility_of_element_located((By.ID, "username-field")))
-username_field.send_keys("username")
+username_field.send_keys(USERNAME)
 
 password_field = driver.find_element(By.ID, "password-field")
-password_field.send_keys("Password")
+password_field.send_keys(PASSWORD)
 
 # ==================== CAPTCHA (15 sec) ====================
 time.sleep(15)
