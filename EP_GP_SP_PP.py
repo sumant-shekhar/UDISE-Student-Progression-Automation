@@ -570,7 +570,6 @@ while True:
             save_log()
 
             print(f"\n🎉 All students processed!")
-            print(f"✅ Successful : {log_data['summary']['successful']}")
             print(f"❌ Failed     : {log_data['summary']['failed']}")
             print(f"📄 Log saved  : {LOG_PATH}")
             break  # Exit the while True loop
@@ -601,6 +600,5 @@ log_data["summary"]["finished_at"] = datetime.now().isoformat()
 save_log()
 
 print(f"\n🎉 All students processed!")
-print(f"✅ Successful : {log_data['summary']['successful']}")
 print(f"❌ Failed     : {log_data['summary']['failed']}")
 print(f"📄 Log saved  : {LOG_PATH}")
