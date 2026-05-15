@@ -61,7 +61,7 @@ def js_click(driver, wait, xpath, retries=3):
             return el
         except StaleElementReferenceException:
             print(f"  ⚠️ Stale element on click, retrying ({attempt+1}/{retries})...")
-            time.sleep(0.5)
+            time.sleep(0.2)
     raise Exception(f"js_click failed after {retries} retries: {xpath}")
 
 def js_click_css(driver, wait, css, retries=3):
@@ -73,7 +73,7 @@ def js_click_css(driver, wait, css, retries=3):
             return el
         except StaleElementReferenceException:
             print(f"  ⚠️ Stale element on CSS click, retrying ({attempt+1}/{retries})...")
-            time.sleep(0.5)
+            time.sleep(0.2)
     raise Exception(f"js_click_css failed after {retries} retries: {css}")
 
 # ==================== Height & Weight table (Class 1–10) ====================
@@ -232,18 +232,16 @@ while True:
                 full_number = "97855" + str(random.randint(10000, 99999))
                 phone_input.send_keys(full_number)
                 student_log["phone"] = full_number
-                print(f"  ✅ Phone number set: {full_number}")
             else:
                 student_log["phone"] = current_value
-                print(f"  ℹ️ Phone already valid: {current_value}, skipping.")
         except Exception as e:
             print(f"  ❌ Phone number error: {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── Scroll to bottom so all fields are visible ──
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1)
+        time.sleep(0.3)
 
         # ── Blood Group — fill only if empty ──
         try:
@@ -252,24 +250,22 @@ while True:
             ))
             if blood_group_select.first_selected_option.get_attribute("value") == "":
                 blood_group_select.select_by_value("9")
-                print("  ✅ Blood group set to Under Investigation - Result will be updated soon (9)")
             else:
-                print("  ℹ️ Blood group already set, skipping.")
         except Exception as e:
             print(f"  ❌ Blood group error: {e}")
 
         # ── Save General Profile ──
         js_click(driver, wait, "//button[normalize-space(span/text())='Save']")
-        time.sleep(0.5)
+        time.sleep(0.2)
         print("  ✅ General Profile saved")
 
         # ── Dismiss the save confirmation popup ──
         js_click_css(driver, wait, "div.swal2-actions > button.swal2-confirm")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── Move to next tab (Enrolment Profile) ──
         js_click(driver, wait, '//button[@type="button" and @matsteppernext]')
-        time.sleep(0.5)
+        time.sleep(0.2)
         print("  ✅ Moved to Enrolment Profile tab")
 
         # ══════════════════════════════════════════
@@ -278,7 +274,7 @@ while True:
 
         # ── Scroll down ──
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.2.1 Admission Number — fill only if empty ──
         try:
@@ -287,22 +283,18 @@ while True:
                 adm_no = str(random.randint(10, 99))
                 adm_input.send_keys(adm_no)
                 student_log["admission_no"] = adm_no
-                print(f"  ✅ Admission number filled: {adm_no}")
             else:
-                print("  ℹ️ Admission number already set, skipping.")
         except Exception as e:
             print(f"  ❌ Admission number error: {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.2.3(a) Medium of Instruction — set to Hindi if unset ──
         try:
             med_select = Select(wait.until(EC.presence_of_element_located((By.ID, "medium"))))
             if med_select.first_selected_option.text.strip().lower() == "select":
                 med_select.select_by_visible_text("4-Hindi")
-                print("  ✅ Medium of Instruction set to Hindi")
             else:
-                print(f"  ℹ️ Medium already set: {med_select.first_selected_option.text.strip()}, skipping.")
         except Exception as e:
             print(f"  ❌ Medium of Instruction error: {e}")
 
@@ -311,25 +303,22 @@ while True:
             lang_select = Select(wait.until(EC.presence_of_element_located((By.ID, "languageGroup"))))
             try:
                 lang_select.select_by_visible_text("English_Hindi_Sanskrit")
-                print("  ✅ Language group: English_Hindi_Sanskrit")
             except Exception:
                 lang_select.select_by_visible_text("Hindi_English_Sanskrit")
-                print("  ✅ Language group: Hindi_English_Sanskrit")
         except Exception as e:
             print(f"  ❌ Language group error: {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.2.6(a) Admitted under RTE Section 12C — click NO ──
         try:
             js_click(driver, wait,
                 '/html/body/app-root/app-admin-dashboard/div[2]/div[2]/main/div/div/div/app-edit-student-new-ac/div/div/div/div/div[2]/div/mat-stepper/div/div[2]/div[2]/form/div/app-enrolment-edit-new-ac/div/div/div/form/div[1]/div/div/div[10]/div/div[2]/div[2]/input'
             )
-            print("  ✅ RTE 12C: NO selected")
         except Exception as e:
             print(f"  ⚠️ RTE 12C not found, skipping: {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.2.4(b) Subjects Group — select based on stream (Arts/Science) ──
         try:
@@ -337,7 +326,6 @@ while True:
                 EC.presence_of_element_located((By.XPATH, "//select[@formcontrolname='academicStream']"))
             )
             selected_stream = Select(stream_select_el).first_selected_option.get_attribute("value").strip()
-            print(f"  ℹ️ Academic stream value: {selected_stream}")
 
             subject_options = {
                 "1": ["Geography", "History", "Economics"],   # Arts
@@ -346,7 +334,6 @@ while True:
 
             if selected_stream in subject_options:
                 stream_name = "Arts" if selected_stream == "1" else "Science"
-                print(f"  ✅ {stream_name} stream — selecting subjects...")
 
                 # Open the multi-select dropdown
                 dropdown_btn = wait.until(EC.element_to_be_clickable((
@@ -354,7 +341,7 @@ while True:
                     "//ng-multiselect-dropdown[@formcontrolname='subjectGroup']//span[contains(@class,'dropdown-btn')]"
                 )))
                 dropdown_btn.click()
-                time.sleep(1)
+                time.sleep(0.3)
 
                 for subject in subject_options[selected_stream]:
                     try:
@@ -366,28 +353,26 @@ while True:
                             option.click()
                         except Exception:
                             driver.execute_script("arguments[0].click();", option)
-                        print(f"    ✅ Subject selected: {subject}")
-                        time.sleep(0.5)
+                        time.sleep(0.2)
                     except Exception:
                         print(f"    ⚠️ Could not select subject: {subject}")
-                    time.sleep(1)
+                    time.sleep(0.3)
             else:
-                print("  ℹ️ Stream is not Arts/Science or already set, skipping subjects.")
         except Exception as e:
             print(f"  ⚠️ Academic stream not found, skipping: {e}")
 
-        time.sleep(1)
+        time.sleep(0.3)
 
         # ── Save Enrolment Profile ──
         js_click(driver, wait,
             '/html/body/app-root/app-admin-dashboard/div[2]/div[2]/main/div/div/div/app-edit-student-new-ac/div/div/div/div/div[2]/div/mat-stepper/div/div[2]/div[2]/form/div/app-enrolment-edit-new-ac/div/div/div/form/div[2]/div/button[2]'
         )
-        time.sleep(0.5)
+        time.sleep(0.2)
         print("  ✅ Enrolment Profile saved")
 
         # ── Dismiss save popup ──
         js_click_css(driver, wait, ".swal2-cancel")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ══════════════════════════════════════════
         # SECTION 3 — Facility / Other Details Profile
@@ -399,25 +384,23 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='facProvYN' and @value='1']"
             )))
             driver.execute_script("arguments[0].click();", yes_radio)
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             textbook_checkbox = wait.until(EC.presence_of_element_located((
                 By.XPATH, "//input[@type='checkbox' and @id='textbook']"
             )))
             textbook_checkbox.click()
-            print("  ✅ Facility: YES + Free TextBook checked")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ Facility YES/TextBook error: {e}")
 
         # ── 4.3.2 CWSN — value 2 (No) ──
         try:
             js_click_css(driver, wait, "input[formcontrolname='cwsnYN'][value='2']")
-            print("  ✅ CWSN: No")
         except Exception as e:
             print(f"  ❌ CWSN error: {e}")
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.3.3 Screened for SLD — No ──
         try:
@@ -425,8 +408,7 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='screenedForSld' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", sld_radio)
-            print("  ✅ SLD screening: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ SLD error: {e}")
 
@@ -436,8 +418,7 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='autismSpectrumDisorder' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", asd_radio)
-            print("  ✅ ASD screening: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ ASD error: {e}")
 
@@ -447,8 +428,7 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='attentionDeficitHyperactiveDisorder' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", adhd_radio)
-            print("  ✅ ADHD screening: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ ADHD error: {e}")
 
@@ -458,8 +438,7 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='giftedChildrenYn' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", gifted_radio)
-            print("  ✅ Gifted/Talented: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ Gifted/Talented error: {e}")
 
@@ -469,8 +448,7 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='olympdsNlc' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", olympiads_radio)
-            print("  ✅ Olympiads/NLC: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ Olympiads/NLC error: {e}")
 
@@ -480,15 +458,13 @@ while True:
                 By.XPATH, "//input[@type='radio' and @formcontrolname='nccNssYn' and @value='2']"
             )))
             driver.execute_script("arguments[0].click();", ncc_radio)
-            print("  ✅ NCC/NSS: No")
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"  ❌ NCC/NSS error: {e}")
 
         # ── 4.3.9 Capable of handling digital devices — No ──
         try:
             js_click_css(driver, wait, "input[name='DGC'][value='2']")
-            print("  ✅ Digital devices: No")
         except Exception as e:
             print(f"  ❌ Digital devices error: {e}")
 
@@ -496,7 +472,6 @@ while True:
         detected_class = get_class_number(student_log.get("class"))
         base_height = CLASS_DATA[detected_class]["height_cm"]
         base_weight = CLASS_DATA[detected_class]["weight_kg"]
-        print(f"  ℹ️ Class detected: '{student_log.get('class')}' → mapped to class {detected_class}")
         student_height = str(random.randint(base_height - 5, base_height + 5))
         student_weight = str(random.randint(base_weight - 3, base_weight + 5))
 
@@ -510,34 +485,31 @@ while True:
 
         student_log["height"] = student_height
         student_log["weight"] = student_weight
-        print(f"  ✅ Height: {student_height} cm | Weight: {student_weight} kg")
 
         # ── 4.3.11 Distance from school — value 2 (1–3 km) ──
         distance_dropdown = wait.until(EC.presence_of_element_located((
             By.XPATH, '//select[@formcontrolname="distanceFrmSchool"]'
         )))
         Select(distance_dropdown).select_by_value("2")
-        print("  ✅ Distance from school: 1–3 km")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── 4.3.12 Parent education level — value 5 ──
         parent_edu_dropdown = wait.until(EC.presence_of_element_located((
             By.XPATH, '//select[@formcontrolname="parentEducation"]'
         )))
         Select(parent_edu_dropdown).select_by_value("5")
-        print("  ✅ Parent education level set")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ── Save Other Details / Facility Profile ──
         js_click(driver, wait,
             '/html/body/app-root/app-admin-dashboard/div[2]/div[2]/main/div/div/div/app-edit-student-new-ac/div/div/div/div/div[2]/div/mat-stepper/div/div[2]/div[3]/form/div/app-other-details-edit-new-ac/div/div/div/form/div[2]/div/button[2]'
         )
-        time.sleep(0.5)
+        time.sleep(0.2)
         print("  ✅ Facility/Other Profile saved")
 
         # ── Click Next after saving ──
         js_click(driver, wait, "//button[contains(text(),'Next')]")
-        time.sleep(0.5)
+        time.sleep(0.2)
 
         # ══════════════════════════════════════════
         # SECTION 4 — Profile Preview & Complete
@@ -545,13 +517,13 @@ while True:
 
         # ── Scroll to bottom to see the Complete Data button ──
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(1)
+        time.sleep(0.3)
 
         # ── Click Complete Data ──
         js_click(driver, wait,
             '/html/body/app-root/app-admin-dashboard/div[2]/div[2]/main/div/div/div/app-edit-student-new-ac/div/div/div/div/div[2]/div/mat-stepper/div/div[2]/div[4]/div/app-preview-new-ac/form/div/div[3]/div[3]/div/button[3]'
         )
-        time.sleep(0.5)
+        time.sleep(0.2)
         print("  ✅ Complete Data clicked")
 
         # ── Dismiss the confirmation dialog ──
@@ -585,7 +557,6 @@ while True:
                     ))
                 )
                 driver.execute_script("arguments[0].click();", back_btn)
-                print(f"  ✅ Back To School Dashboard clicked!")
                 time.sleep(2)
             except Exception as e:
                 print(f"  ⚠️ Back To School Dashboard button not found: {e}")
@@ -613,6 +584,9 @@ while True:
         student_log["error"] = str(e)
         log_data["summary"]["failed"] += 1
         print(f"\n  ❌ Student #{student_count} FAILED: {e}")
+        print("  🛑 Fatal error encountered. Stopping to prevent infinite error loops.")
+        print("  👉 Please fix the page manually, navigate to the next student, and restart the script.")
+        break  # Exit the while True loop
 
     finally:
         # Always save log after each student — even if it failed
