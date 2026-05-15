@@ -1,6 +1,6 @@
 # Byte-compiled / optimized / DLL files
 .venv
-LOG_FILENAME
+*.json
 __pycache__/
 *.py[codz]
 *$py.class
