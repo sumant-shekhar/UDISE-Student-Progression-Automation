@@ -250,7 +250,6 @@ while True:
             ))
             if blood_group_select.first_selected_option.get_attribute("value") == "":
                 blood_group_select.select_by_value("9")
-            else:
         except Exception as e:
             print(f"  ❌ Blood group error: {e}")
 
