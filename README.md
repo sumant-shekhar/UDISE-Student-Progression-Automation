@@ -4,6 +4,24 @@
 
 This repository contains Python scripts designed to automate the tedious tasks of student progression and profile updates on the official UDISE+ portal. Built using Selenium, these scripts handle batch processing, randomized data entry (where applicable), and provide robust error handling to ensure a smooth automation experience.
 
+Recently, the codebase was refactored to strictly adhere to **SOLID principles** and Clean Code architecture, breaking down massive files into modular, single-responsibility components for extreme reliability and easy maintenance.
+
+---
+
+## 🏗️ Architecture & Modules
+
+The codebase is split into modular components, meaning the execution logic is completely separated from the browser automation tools:
+
+- **`progression.py`**: The **Main Runner** for the Student Progression Module.
+- **`EP_GP_SP_PP.py`**: The **Main Runner** for the Comprehensive Profile Update.
+- **`webdriver_utils.py`**: Shared utility class handling robust interactions, retries, and stale element recovery.
+- **`logger_utils.py`**: Handles generating timestamped JSON logs per session and per student.
+- **`scraper.py`**: Scrapes and interprets on-screen student data (Name, PEN, Class).
+- **`step1_general_profile.py`**: Handles logic for the General Profile (GP) section.
+- **`step2_enrolment_profile.py`**: Handles logic for the Enrolment Profile (EP) section.
+- **`step3_facility_profile.py`**: Handles logic for the Facility/Other Details Profile (SP) section.
+- **`step4_profile_preview.py`**: Handles finalizing the profile and navigating to the next student.
+
 ---
 
 ## 📋 Features
@@ -34,46 +52,38 @@ Before running the scripts, ensure you have the following installed:
 - **Google Chrome Browser**
 - **Required Python Libraries:**
   ```bash
-  pip install selenium webdriver-manager
+  pip install -r requirements.txt
   ```
+  *(Or install manually: `pip install selenium webdriver-manager`)*
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Simple Guide: How to Use
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/sumant-shekhar/UDISE-Student-Progression-Automation.git
-cd UDISE-Student-Progression-Automation
-```
+### 1. Configure Credentials
+Before running either script, open `progression.py` or `EP_GP_SP_PP.py` in your text editor and update the `USERNAME` and `PASSWORD` constants at the top of the files with your UDISE credentials.
 
-### 2. Configure Credentials
-Open `progression.py` and `EP_GP_SP_PP.py` in a text editor and update the `USERNAME` and `PASSWORD` variables:
-```python
-USERNAME = "YOUR_UDISE_ID"
-PASSWORD = "YOUR_PASSWORD"
-```
-
-### 3. Run the Scripts
-
-#### For Student Progression:
-1. Run the script:
+### 2. Running Student Progression
+When you want to **promote** students to the next class:
+1. Run the script from your terminal:
    ```bash
    python progression.py
    ```
-2. The browser will open. Solve the **CAPTCHA** manually.
-3. Wait for the script to navigate or navigate manually to the **Progression Module**.
-4. Select the Class and Section, then click **Go**.
-5. The script will automatically start updating each student in the list.
+2. The Chrome browser will open and fill your credentials automatically.
+3. Solve the **CAPTCHA** manually within the browser (you have 15 seconds).
+4. Wait for the script to navigate, or manually navigate to the **Progression Module**.
+5. Select your Class and Section, then click **Go**.
+6. The script will automatically detect the loaded students and begin processing the list!
 
-#### For Profile Updates (GP/EP/SP):
-1. Run the script:
+### 3. Running Profile Updates (GP/EP/SP)
+When you want to **complete student profiles** (contact info, height/weight, subjects):
+1. Run the script from your terminal:
    ```bash
    python EP_GP_SP_PP.py
    ```
-2. Solve the **CAPTCHA** within 15 seconds.
-3. Navigate manually to the **Student List** and click on the **Edit** icon for the first student you want to process.
-4. The script will take over and process students one by one until the end of the list.
+2. Solve the **CAPTCHA** manually within the browser (you have 15 seconds).
+3. The script will wait 25 seconds for you. Manually navigate to the **Student List** and click on the **Edit** icon for the *first* student you want to process.
+4. Once the student's profile page loads, the script takes over. It will fill all sections (General, Enrolment, Facility), save them, and click "Next Student" to loop until the entire class is complete.
 
 ---
 
